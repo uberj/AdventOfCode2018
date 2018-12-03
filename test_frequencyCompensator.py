@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from FrequencyCompensator import FrequencyCompensator
+from day1 import FrequencyCompensator
 
 
 class TestFrequencyCompensator(TestCase):
