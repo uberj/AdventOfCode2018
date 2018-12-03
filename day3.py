@@ -1,13 +1,14 @@
 def strip_list(l):
     return map(lambda s: s.strip(), l)
 
-def to_ints(l):
-    return map(int, l)
+
+def parse_claim_id(claim):
+    return strip_list(claim.split("@"))
+
 
 class FabricLayout(object):
-
     def claim_squares(self, claim, include_claim_id=False):
-        claim_id, more = strip_list(claim.split("@"))
+        claim_id, more = parse_claim_id(claim)
         offsets, dims = strip_list(more.split(":"))
         x_offset, y_offset = map(int, offsets.split(","))
         x_dim, y_dim = map(int, dims.split("x"))
@@ -34,16 +35,17 @@ class FabricLayout(object):
     def disjoint_claim(self, input_):
         overlapping_inches = self.overlapping_inches(input_)
         for claim_def in input_:
-            overlapping_claim_or_none = None
-            for id_, x, y in self.claim_squares(claim_def, include_claim_id=True):
-                if (x, y) in overlapping_inches:
-                    overlapping_claim_or_none = id_
+            overlaps = False
+            claim_id, _ = parse_claim_id(claim_def)
+            for claim in self.claim_squares(claim_def):
+                if claim in overlapping_inches:
+                    overlaps = True
                     break
 
-            if overlapping_claim_or_none is not None:
+            if overlaps:
                 continue
 
-            return id_.strip("#")
+            return claim_id.strip("#")
 
 
 def challenge1():
