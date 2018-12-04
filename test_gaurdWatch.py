@@ -1,11 +1,11 @@
 from unittest import TestCase
 import random
 
-from day4 import GaurdWatch
+from day4 import GuardWatch
 
 class TestGaurdWatch(TestCase):
     def setUp(self):
-        self.gw = GaurdWatch()
+        self.gw = GuardWatch()
 
     def to_input(self, s):
         return s.replace(', ', '\n')
