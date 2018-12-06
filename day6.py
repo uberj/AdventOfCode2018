@@ -2,6 +2,35 @@ from pprint import pprint
 def parking_distance(coord1, coord2):
     return abs(coord1[0] - coord2[0]) + abs(coord1[1] - coord2[1])
 
+def density(input_, limit=32):
+    coords = list(map(lambda i: list(map(int, i.split(", "))), input_))
+    max_x, max_y = -1, -1
+    for coord in coords:
+        max_x = max(max_x, coord[0] + 2)
+        max_y = max(max_y, coord[1] + 2)
+
+    coordinate_grids = [[[None for _ in range(max_x)] for _ in range(max_y)] for _ in range(len(coords))]
+
+    for i, coord in enumerate(coords):
+        for y in range(max_y):
+            for x in range(max_x):
+                coordinate_grids[i][y][x] = parking_distance((x, y), coord)
+
+    total_distance_grid = [[0 for _ in range(max_x)] for _ in range(max_y)]
+    for y in range(max_y):
+        for x in range(max_x):
+            for i, candidate_grid in enumerate(coordinate_grids):
+                candidate_distance = candidate_grid[y][x]
+                total_distance_grid[y][x] += candidate_distance
+
+    below_limit_count = 0
+    for row in total_distance_grid:
+        for d in row:
+            if d < limit:
+                below_limit_count += 1
+
+    return below_limit_count
+
 
 def furthest_point(input_):
     coords = list(map(lambda i: list(map(int, i.split(", "))), input_))
@@ -60,8 +89,8 @@ def challenge1():
 
 
 def challenge2():
-    with open("inputs/polymer.txt", "r") as fd:
-        return furthest_point(fd.read().strip())
+    with open("inputs/coordinates.txt", "r") as fd:
+        return density(fd.read().strip().split("\n"), limit=10000)
 
 
 if __name__ == "__main__":
@@ -72,5 +101,12 @@ if __name__ == "__main__":
 5, 5
 8, 9""".split("\n"))
     assert 17 == test, test
+    test1 = density("""1, 1
+1, 6
+8, 3
+3, 4
+5, 5
+8, 9""".split("\n"))
+    assert 16 == test1, test1
     print(challenge1())
-    #print(len(challenge2()))
+    print(challenge2())
